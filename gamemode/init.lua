@@ -1,5 +1,10 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
+
+AddCSLuaFile( "player/worldinfo.lua" )
+AddCSLuaFile( "player/menus.lua" )
+AddCSLuaFile( "player/hud.lua" )
+AddCSLuaFile( "player/scoreboard.lua" )
 include( "shared.lua" )
 
 print()
