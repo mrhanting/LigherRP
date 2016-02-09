@@ -1,4 +1,7 @@
 local pm = FindMetaTable("Player")
+util.AddNetworkString( "job_amount" )
+util.AddNetworkString( "stock_table" )
+util.AddNetworkString( "gun_table" )
 
 function SetLoadout(ply)
 
@@ -43,7 +46,7 @@ function PlayerPickup( ply, ent )
 	end
 	return false
 end
-hook.Add( "PhysgunPickup", "Allow Player Pickup", PlayerPickup )
+--hook.Add( "PhysgunPickup", "Allow Player Pickup", PlayerPickup )
 
 function GM:SpawnMenuEnabled()
 	return false;
@@ -63,6 +66,25 @@ function GM:PlayerDeath( victim, weapon, attacker )
 	end
 end
 
+hook.Add( "PlayerCanPickupWeapon", "noDoublePickup", function( ply, wep )
+	if ( ply:HasWeapon( wep:GetClass() ) ) then return false end
+end )
+
+function pm:SendNetVars()
+	net.Start( "job_amount" )
+		net.WriteInt(job_amount, 8 )
+		net.WriteTable(job_table)
+	net.Broadcast()
+	
+	net.Start( "stock_table" )
+		net.WriteTable(stock_table)
+	net.Broadcast()
+	
+	net.Start( "gun_table" )
+		net.WriteTable(gun_table)
+	net.Broadcast()
+end
+
 function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 
 	if ( hitgroup == HITGROUP_HEAD ) then
@@ -80,8 +102,15 @@ function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 end
 
 function GM:ShowSpare2( ply ) -- F4
-    umsg.Start( "panel1", ply ) 
+    umsg.Start( "f4menu", ply ) 
     umsg.End()
+end
+
+function GM:ShowSpare1( ply ) -- F3
+	if ply:GetJobClass() == "gundealer" then
+		umsg.Start( "f3menu", ply ) 
+		umsg.End()
+	end
 end
 
 -- Find Player by SteamID

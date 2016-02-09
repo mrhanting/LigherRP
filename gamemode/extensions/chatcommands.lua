@@ -2,6 +2,36 @@ local pm = FindMetaTable("Player")
 
 function CheckChatCommands(ply, text)
 
+	if string.sub(text, 1, 7) == "/buygun" and ply:GetJobClass() == "gundealer" then
+	
+		local gun = string.Split(text, " ")[2]
+		local tr = ply:GetEyeTrace()
+		local gun_class = GetGunClass(gun)
+		local gun_cost = GetGun(gun).Cost
+		
+		if ply:GetMoney() > gun_cost then	
+			local ent = ents.Create(gun_class)
+			local ply_f = ply:GetForward()
+			
+			local pos = ply_f + ply:GetPos()
+			ent:SetPos(pos)
+			ent:Spawn()		
+			ply:AddMoney(gun_cost * -1)
+		else
+			ply:ChatPrint("You cannot afford this!")
+		end	
+		return false
+	end
+	
+	if string.sub(text, 1, 5) == "/drop" then
+		local wep = ply:GetActiveWeapon()
+		if IsValid(wep) then
+			ply:DropWeapon(wep)
+			ply:SelectWeapon("weapon_physgun")
+		end
+		return false
+	end
+
 	if string.sub(text, 1, 9) == "/setmoney" then
 		if checkAdmin(ply) then
 			local player = findPlayer(string.Split(text, " ")[2])

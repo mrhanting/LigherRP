@@ -12,3 +12,7 @@ newJob("Thief", 30, "thief", Color(200, 200, 200, 255), {
 newJob("Police", 50, "police", Color(0, 0, 255, 255), {
 	"models/player/combine_soldier.mdl"
 })
+
+newJob("Gun Dealer", 50, "gundealer", Color(255, 145, 0, 255), {
+	"models/player/guerilla.mdl"
+})

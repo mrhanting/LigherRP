@@ -37,7 +37,6 @@ function SetupJobs()
 		v.teamid = c
 		c = c + 1
 		jobs = jobs + 1
-		print("Team " .. v.Command .. " Setup!")
 	end
 	job_amount = jobs
 	job_table = joblist

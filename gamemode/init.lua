@@ -5,18 +5,19 @@ include( "shared.lua" )
 print()
 print("REFRESH OR SERVER START TRIGGER")
 include("/config/config.lua")
-util.AddNetworkString( "job_amount" )
-util.AddNetworkString( "stock_table" )
 
-print("Including extensions... (7)") 
+print("Including extensions... (8)") 
 include( "/extensions/player.lua")
 include( "/extensions/money.lua")
+include( "/extensions/merchant.lua")
 include( "/extensions/stocks.lua")
 include( "/extensions/chatcommands.lua")
 include( "/extensions/jobs.lua")
 include( "/extensions/chat.lua")
 include( "/extensions/admin.lua")
 
+print("Running setup scripts... (3)")
+include( "/config/addguns.lua")
 SetupJobs()
 DoSalaryCycle()
 
@@ -35,15 +36,7 @@ function GM:PlayerSpawn( ply )
 	ply:SetJob(curJob)
 	ply:CheckMoneyExists()
 	ply:GetData()
-	
-	net.Start( "job_amount" )
-		net.WriteInt(job_amount, 8 )
-		net.WriteTable(job_table)
-	net.Broadcast()
-	
-	net.Start( "stock_table" )
-		net.WriteTable(stock_table)
-	net.Broadcast()
+	ply:SendNetVars()
 	
 end
 
@@ -53,6 +46,7 @@ function GM:PlayerInitialSpawn( ply )
 		ply:SetMoney(1000)
 		ply:SetName(ply:Nick())
 		ply:SetJob("Unemployed")
+		ply:SetPData("tingrp_joined",  "true")
 		print("New Player: " .. ply:Nick())
 	end
 end

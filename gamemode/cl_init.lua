@@ -262,13 +262,12 @@ function RecieveConsoleText( um )
 end
 usermessage.Hook( "consolemsg", RecieveConsoleText )
 
-local function MyMenu()
+local function F4Menu()
     local Menu = vgui.Create("DFrame")
     Menu:SetPos(ScrW() / 2 - 400, ScrH() / 2 - 400)
     Menu:SetSize(800, 700)
 	Menu:SetBackgroundBlur(true)
 	Menu:SetTitle("Job Selection")
-    Menu:SetText("My Menu")
     Menu:SetDraggable(false)
     Menu:ShowCloseButton(true)
     Menu:MakePopup()
@@ -283,6 +282,7 @@ local function MyMenu()
 		DermaButton:SetSize( 250, 50 )				
 		DermaButton.DoClick = function()			
 			RunConsoleCommand( "say", "/team " .. v["Command"] )
+			Menu:Remove()
 		end
 		offset = offset + 100
 		if offset >= 625 then
@@ -292,7 +292,39 @@ local function MyMenu()
 	end
 
 end
-usermessage.Hook("panel1", MyMenu)
+usermessage.Hook("f4menu", F4Menu)
+
+local function F3Menu()
+    local Menu = vgui.Create("DFrame")
+    Menu:SetPos(ScrW() / 2 - 400, ScrH() / 2 - 400)
+    Menu:SetSize(800, 700)
+	Menu:SetBackgroundBlur(true)
+	Menu:SetTitle("Merchant Menu")
+    Menu:SetDraggable(false)
+    Menu:ShowCloseButton(true)
+    Menu:MakePopup()
+	
+	local offset = 50
+	local offset_x = 25
+	for k, v in pairs (gun_table) do 
+		local DermaButton = vgui.Create( "DButton" )	
+		DermaButton:SetParent( Menu )	
+		DermaButton:SetText( v["Name"] .. " ($" .. v["Cost"] .. ")")				
+		DermaButton:SetPos( offset_x, offset )					
+		DermaButton:SetSize( 250, 50 )				
+		DermaButton.DoClick = function()			
+			RunConsoleCommand( "say", "/buygun " .. v["Command"] )
+			Menu:Remove()
+		end
+		offset = offset + 100
+		if offset >= 625 then
+			offset_x = offset_x + 275
+			offset = 50
+		end
+	end
+	
+end
+usermessage.Hook("f3menu", F3Menu)
 
 net.Receive( "job_amount", function()
 
@@ -307,6 +339,14 @@ net.Receive( "stock_table", function()
 	stock_table = net.ReadTable()
 	
 end )
+
+net.Receive( "gun_table", function()
+
+	gun_table = {}
+	gun_table = net.ReadTable()
+	
+end )
+
 
 local function DrawPlayerInfo(ply)
 
@@ -356,8 +396,8 @@ local function DrawPlayerInfo(ply)
 	
 end
 
-hook.Add("HUDPaint", "LoopThroughPlayers", function()	//Add our function to the HUDPaint hook
-	for k,v in pairs (player.GetAll()) do	//Loop through all the players
+hook.Add("HUDPaint", "LoopThroughPlayers", function()
+	for k,v in pairs (player.GetAll()) do
 		
 		if v:Alive() then
 			local plydist = LocalPlayer():GetPos()
@@ -367,6 +407,40 @@ hook.Add("HUDPaint", "LoopThroughPlayers", function()	//Add our function to the 
 			if dist < 300 then
 				DrawPlayerInfo(v)
 			end		
+		end
+		
+	end
+end)
+
+local function DrawEntityInfo(entity)
+
+	local zOffset = 50
+	local x = entity:GetPos().x			//Get the X position of our player
+	local y = entity:GetPos().y			//Get the Y position of our player
+	local z = entity:GetPos().z			//Get the Z position of our player
+	local pos = Vector(x,y,z+zOffset)	//Add our offset onto the Vector
+	local pos2d = pos:ToScreen()		//Change the 3D vector to a 2D one
+	
+	draw.DrawText(entity:GetClass() ,"Default",pos2d.x,pos2d.y + 100,Color(255,255,255,255),TEXT_ALIGN_CENTER)
+
+end
+
+hook.Add("HUDPaint", "LoopAllGuns", function()
+	for k,v in pairs (ents.GetAll()) do
+		
+		if IsValid(v) then
+			local plydist = LocalPlayer():GetPos()
+			local otherdist = v:GetPos()
+			local dist = plydist:Distance(otherdist)
+			local owner = v:GetOwner()
+			
+			if IsValid(owner) and owner:GetClass() == "player" then
+				-- Do nothing
+			else			
+				if dist < 300 and v:IsWeapon() then
+					DrawEntityInfo(v)
+				end					
+			end
 		end
 		
 	end

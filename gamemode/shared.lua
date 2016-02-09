@@ -8,6 +8,7 @@ DeriveGamemode( "sandbox" )
 job_amount = 0
 job_table = {}
 stock_table = {}
+gun_table = {}
 
 function GM:Initialize()
 	-- Do stuff
