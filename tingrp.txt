@@ -1,9 +1,0 @@
-"tingrp"
-{
-
-	"base"			"sandbox"
-	"title"			"TingRP"
-	"maps"			"^rp_"
-	"menusystem"	"1"
-
-}
