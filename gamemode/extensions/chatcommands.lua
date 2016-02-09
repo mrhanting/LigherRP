@@ -25,6 +25,14 @@ function CheckChatCommands(ply, text)
 	
 	if string.sub(text, 1, 5) == "/drop" then
 		local wep = ply:GetActiveWeapon()
+		
+		for k, v in pairs (Config.nodrop) do
+			if wep:GetClass() == v then
+				ply:ChatPrint("You cannot drop this weapon!")
+				return false
+			end
+		end
+		
 		if IsValid(wep) then
 			ply:DropWeapon(wep)
 			ply:SelectWeapon("weapon_physgun")

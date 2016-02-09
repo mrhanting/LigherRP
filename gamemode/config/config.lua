@@ -23,3 +23,13 @@ Config.stocks = {
 	"MSFT",
 	"GOOG"
 }
+
+-- Set weapons that can't be dropped
+Config.nodrop = {
+
+	"weapon_physcannon",
+	"gmod_camera",
+	"weapon_physgun",
+	"gmod_tool"
+
+}
